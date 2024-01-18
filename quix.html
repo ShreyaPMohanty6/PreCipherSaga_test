@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Capital of France Quiz</title> 
+</head> 
+<body> 
+ 
+  <div id="quiz-container"> 
+    <h1>Capital of France Quiz</h1> 
+    <div id="question">What is the capital of France?</div> 
+    <div> 
+      <label>Your Answer: <input type="text" id="user-answer"></label> 
+    </div> 
+    <button onclick="checkAnswer()">Submit Answer</button> 
+  </div> 
+ 
+  <script type="module"> 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"; 
+    import { getDatabase, ref, get, set } from  "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"; 
+    
+    const firebaseConfig = {
+            apiKey: "AIzaSyD6AZgQ3G8UTy4WoavhyCfJ95xgTEcWxJ0",
+            authDomain: "preciphersaga-fb.firebaseapp.com",
+            projectId: "preciphersaga-fb",
+            storageBucket: "preciphersaga-fb.appspot.com",
+            messagingSenderId: "563353573944",
+            appId: "1:563353573944:web:d23365fc2ab8b49fd664cd",
+            measurementId: "G-9W5ECCZ5LC"
+    };
+
+    const app = initializeApp(firebaseConfig);    
+    const database = getDatabase(); 
+ 
+    // Replace with the actual path to the list of users in your database 
+    const userListRef = ref(database, '/UsersList'); 
+  </script>
+
+  <script>
+    // Function to check the user's answer 
+    function checkAnswer() { 
+      const userAnswer = document.getElementById('user-answer').value.toLowerCase(); 
+      const correctAnswer = "paris"; // Correct answer (case-insensitive) 
+ 
+      // Replace "userName" with the actual name of the user you want to check 
+      const userName = "MVnWqT2aZeOPfFJFUgZOWSWcE6J2"; 
+ 
+      get(ref(userListRef, userName)).then((snapshot) => {
+        if (snapshot.exists()) { 
+          // User found in the list 
+          const userScoreRef = ref(userListRef, `${userName}/score`);
+          
+          if (userAnswer === correctAnswer) { 
+            // Update points for correct answer 
+            set(userScoreRef, (snapshot.val() || 0) + 100)
+              .then(() => {
+                alert('Correct! Paris is the capital of France.');
+              })
+              .catch((error) => {
+                console.error('Error updating score:', error);
+              });
+          } else { 
+            alert('Incorrect. The correct answer is Paris.'); 
+          } 
+        } else { 
+          alert('User not found in the list.'); 
+        } 
+      }).catch((error) => {
+        console.error('Error getting user data:', error);
+      });
+    } 
+  </script> 
+ 
+</body> 
+</html>
